@@ -1,0 +1,176 @@
+{
+  "info": {
+    "name": "ClassLens AI API Collection",
+    "description": "API endpoints for ClassLens AI - Smart Document Q&A",
+    "version": "1.0.0",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000",
+      "type": "string"
+    },
+    {
+      "key": "courseId",
+      "value": "1",
+      "type": "string"
+    },
+    {
+      "key": "documentId",
+      "value": "1",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Upload Document",
+      "request": {
+        "method": "POST",
+        "header": [],
+        "body": {
+          "mode": "formdata",
+          "formdata": [
+            {
+              "key": "file",
+              "type": "file",
+              "src": "",
+              "description": "PDF, TXT, DOCX, or PPTX file (max 50MB)"
+            },
+            {
+              "key": "courseId",
+              "value": "{{courseId}}",
+              "type": "text"
+            }
+          ]
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/upload",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "upload"]
+        },
+        "description": "Upload a document to a course. Returns document ID and status."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/upload"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"documentId\": 4,\n  \"status\": \"queued\",\n  \"title\": \"Lecture 5 - Deep Learning.pdf\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Search Documents",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"courseId\": {{courseId}},\n  \"query\": \"What is backpropagation?\",\n  \"topK\": 6\n}"
+        },
+        "url": {
+          "raw": "{{baseUrl}}/api/search",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "search"]
+        },
+        "description": "Search course materials with natural language query. Returns answer and citations."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/api/search"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"answer\": \"Backpropagation is a fundamental algorithm in neural networks that calculates gradients of the loss function with respect to the network's weights.\",\n  \"citations\": [\n    {\n      \"documentId\": 1,\n      \"title\": \"Lecture 1 - Introduction.pdf\",\n      \"page\": 7,\n      \"snippet\": \"Backpropagation is a fundamental algorithm...\",\n      \"score\": 0.92\n    }\n  ],\n  \"latencyMs\": 145\n}"
+        }
+      ]
+    },
+    {
+      "name": "Get Document",
+      "request": {
+        "method": "GET",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/documents/{{documentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "documents", "{{documentId}}"]
+        },
+        "description": "Get document metadata by ID."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/1"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"id\": 1,\n  \"courseId\": 1,\n  \"title\": \"Lecture 1 - Introduction.pdf\",\n  \"fileKey\": \"courses/1/lecture-1-intro.pdf\",\n  \"checksum\": \"abc123def456\",\n  \"status\": \"indexed\",\n  \"pages\": 15,\n  \"createdAt\": \"2024-01-15T10:30:00.000Z\",\n  \"updatedAt\": \"2024-01-15T10:30:00.000Z\"\n}"
+        }
+      ]
+    },
+    {
+      "name": "Delete Document",
+      "request": {
+        "method": "DELETE",
+        "header": [],
+        "url": {
+          "raw": "{{baseUrl}}/api/documents/{{documentId}}",
+          "host": ["{{baseUrl}}"],
+          "path": ["api", "documents", "{{documentId}}"]
+        },
+        "description": "Delete a document and its associated chunks. Soft delete with audit trail."
+      },
+      "response": [
+        {
+          "name": "Success Response",
+          "originalRequest": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/api/documents/1"
+            }
+          },
+          "status": "OK",
+          "code": 200,
+          "_postman_previewlanguage": "json",
+          "body": "{\n  \"success\": true\n}"
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Set dynamic variables if needed",
+          "// pm.environment.set(\"timestamp\", Date.now());"
+        ]
+      }
+    }
+  ]
+}
